@@ -11,12 +11,12 @@ class connectDB {
 
         $this->con = mysqli_init();
 
-        // Kiểm tra xem có đang chạy trên Render (biến môi trường DB_HOST tồn tại) hay không
-        if (getenv('DB_HOST')) {
+        // Kiểm tra xem có đang chạy trên Render (biến môi trường DB_HOST tồn tại và không phải local docker/xampp) hay không
+        if (getenv('DB_HOST') && getenv('DB_HOST') !== 'db' && getenv('DB_HOST') !== 'localhost' && getenv('DB_HOST') !== '127.0.0.1') {
             // Đang trên mạng (Aiven) -> Bắt buộc bật khiên bảo mật SSL
             mysqli_real_connect($this->con, $host, $user, $pass, $name, $port, null, MYSQLI_CLIENT_SSL);
         } else {
-            // Đang ở nhà (Localhost XAMPP) -> Tắt SSL, kết nối bình thường
+            // Đang ở nhà (Localhost XAMPP hoặc Docker Local) -> Tắt SSL, kết nối bình thường
             mysqli_real_connect($this->con, $host, $user, $pass, $name, $port);
         }
 
